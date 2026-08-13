@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: hotel-postgres
+
+    environment:
+      POSTGRES_DB: slms_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Pranay123
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    restart: always
+
+  backend:
+    image: hotel-backend:v2
+    container_name: hotel-backend
+
+    depends_on:
+      - postgres
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/slms_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: Pranay123
+
+    restart: always
+
+  frontend:
+    image: hotel-frontend:v2
+    container_name: hotel-frontend
+
+    depends_on:
+      - backend
+
+    ports:
+      - "3000:80"
+
+    restart: always
+
+volumes:
+  postgres_data:

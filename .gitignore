@@ -1,0 +1,47 @@
+# =========================
+# Node / React
+# =========================
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# =========================
+# Java / Gradle
+# =========================
+backend/build/
+backend/.gradle/
+*.class
+
+# =========================
+# IDE
+# =========================
+.idea/
+*.iml
+.vscode/
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# Environment / Secrets
+# =========================
+.env
+.env.*
+*.pem
+
+# =========================
+# Terraform
+# =========================
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!terraform.tfvars.example
