@@ -19,7 +19,7 @@ public class CorsConfig {
                 registry.addMapping("/**")
                         .allowedOrigins(
                                 "http://localhost:5173",
-                                "http://13.63.53.186:3000"
+                                "http://13.48.47.1:3000"
                         )
                         .allowedMethods("*")
                         .allowedHeaders("*");

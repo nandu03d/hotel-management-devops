@@ -19,7 +19,7 @@ services:
     restart: always
 
   backend:
-    image: hotel-backend:v2
+    image: hotel-backend:v3
     container_name: hotel-backend
 
     depends_on:
@@ -36,7 +36,7 @@ services:
     restart: always
 
   frontend:
-    image: hotel-frontend:v2
+    image: hotel-frontend:v3
     container_name: hotel-frontend
 
     depends_on:
