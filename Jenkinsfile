@@ -5,6 +5,9 @@ pipeline {
     environment {
         BACKEND_IMAGE  = "hotel-backend:v3"
         FRONTEND_IMAGE = "hotel-frontend:v3"
+
+        AWS_REGION  = "eu-north-1"
+        ECR_REGISTRY = "243894880963.dkr.ecr.eu-north-1.amazonaws.com"
     }
 
     stages {
@@ -72,6 +75,61 @@ pipeline {
 
                     echo "Docker images created:"
                     docker images | grep hotel-
+                '''
+            }
+        }
+
+        stage('Push Images to ECR') {
+            steps {
+                sh '''
+                    echo "======================================"
+                    echo "AWS ECR LOGIN"
+                    echo "======================================"
+
+                    aws sts get-caller-identity
+
+                    aws ecr get-login-password --region ${AWS_REGION} | \
+                    docker login \
+                    --username AWS \
+                    --password-stdin ${ECR_REGISTRY}
+
+                    echo "ECR login successful."
+
+                    echo "======================================"
+                    echo "TAGGING IMAGES"
+                    echo "======================================"
+
+                    docker tag ${BACKEND_IMAGE} \
+                    ${ECR_REGISTRY}/hotel-backend:v3
+
+                    docker tag ${FRONTEND_IMAGE} \
+                    ${ECR_REGISTRY}/hotel-frontend:v3
+
+                    echo "Images tagged for ECR."
+
+                    echo "======================================"
+                    echo "PUSHING BACKEND IMAGE"
+                    echo "======================================"
+
+                    docker push \
+                    ${ECR_REGISTRY}/hotel-backend:v3
+
+                    echo "======================================"
+                    echo "PUSHING FRONTEND IMAGE"
+                    echo "======================================"
+
+                    docker push \
+                    ${ECR_REGISTRY}/hotel-frontend:v3
+
+                    echo "======================================"
+                    echo "ECR PUSH COMPLETED"
+                    echo "======================================"
+
+                    echo "Backend:"
+                    echo "${ECR_REGISTRY}/hotel-backend:v3"
+
+                    echo "Frontend:"
+                    echo "${ECR_REGISTRY}/hotel-frontend:v3"
                 '''
             }
         }
@@ -145,6 +203,7 @@ pipeline {
                     curl -f http://localhost:8080/api/dashboard
 
                     echo
+
                     echo "======================================"
                     echo "FRONTEND CHECK"
                     echo "======================================"
@@ -152,6 +211,7 @@ pipeline {
                     curl -f http://localhost:3000
 
                     echo
+
                     echo "Application verification successful."
                 '''
             }
@@ -165,9 +225,20 @@ pipeline {
 ======================================
 PIPELINE SUCCESSFUL
 ======================================
-Application built and deployed successfully!
-Backend:  http://localhost:8080
-Frontend: http://localhost:3000
+Application built, pushed to ECR,
+and deployed successfully!
+
+Backend ECR:
+243894880963.dkr.ecr.eu-north-1.amazonaws.com/hotel-backend:v3
+
+Frontend ECR:
+243894880963.dkr.ecr.eu-north-1.amazonaws.com/hotel-frontend:v3
+
+Backend:
+http://localhost:8080
+
+Frontend:
+http://localhost:3000
 ======================================
 '''
         }
